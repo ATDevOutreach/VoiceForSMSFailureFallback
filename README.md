@@ -5,7 +5,7 @@ SMSes sent to customer phone numbers may fail due to several reasons:
 2. Customer phone is offline beyond the SMS retry period set by telco(varies upto 24 hours)
 3. Issue with the users phone make
 
-The SMS status may also be any of the following Statuses, apart from success:
+The SMS status may also be any of the following Statuses, apart from 'Success':
 1. 'Sent'
 2. 'Submitted'
 3. 'Buffered'
@@ -25,4 +25,11 @@ b. On the next communication cycle, SMSes are sent to users with status Success 
 - Voice calls Fail: Contact List Updated
 
 #The APP
-We create a Ruby App running the simple Sinatra Framework, within a docker environment. The docker app runs a Postgres container alongside.
+We create a Ruby App running the simple Sinatra Framework, within a docker environment. The docker app runs a Postgres container alongside.[WIP]<br>
+The files of note are:
+- Dockerfile: to build the app and maintain one Ruby Version{Critical}
+- Gemfile: for all the app dependencies
+- .env: for all the Africa's Talking credentials and any other credentials/resources
+- app.rb: the app in Ruby 'minimalist' Sinatra framework {Let the perfomance begin ;-)}
+- database.rb: the database connector
+- docker-compose.yml:for container orchestration
