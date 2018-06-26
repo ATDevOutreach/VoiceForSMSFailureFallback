@@ -13,7 +13,7 @@ The SMS status may also be any of the following Statuses, apart from 'Success':
 5. 'Failed'
 
 #### Voice Workflow
-To ensure communication with clients in cases where delivery reports indicate a different status from 'Success' the following workflow can be assumed:
+To ensure communication with clients in cases where delivery reports indicate a different status from 'Success' the following workflow can be assumed:<br>
 a. SMS is sent to the customer via AT API
 - Delivery Report is a Success: Contact list updated with the status or as active
 - Delivery Report is apart from Success: Contact list updated with status or inactive
@@ -24,7 +24,7 @@ b. On the next communication cycle, SMSes are sent to users with status Success 
 - Voice calls A Success: Contact List Updated as contacted Successfully
 - Voice calls Fail: Contact List Updated
 
-#The APP
+#### The APP
 We create a Ruby App running the simple Sinatra Framework, within a docker environment. The docker app runs a Postgres container alongside.[WIP]<br>
 The files of note are:
 - Dockerfile: to build the app and maintain one Ruby Version{Critical}
