@@ -1,4 +1,4 @@
-# Voice API: Using Voice API to Communicate with Frequently failing Messages
+# Voice API: Using Voice API to Communicate with Customers and Remedy Frequently Failing Messages
 #### Introduction 
 SMSes sent to customer phone numbers may fail due to several reasons:
 1. Filled up SMS inbox {on the customers phone}
@@ -27,9 +27,9 @@ b. On the next communication cycle, SMSes are sent to users with status Success 
 #### The APP
 We create a Ruby App running the simple Sinatra Framework, within a docker environment. The docker app runs a Postgres container alongside.[WIP]<br>
 The files of note are:
-- Dockerfile: to build the app and maintain one Ruby Version{Critical}
-- Gemfile: for all the app dependencies
-- .env: for all the Africa's Talking credentials and any other credentials/resources
-- app.rb: the app in Ruby 'minimalist' Sinatra framework {Let the perfomance begin ;-)}
-- database.rb: the database connector
-- docker-compose.yml:for container orchestration
+- <b>Dockerfile:</b> to build the app and maintain one Ruby Version{Critical}
+- <b>Gemfile:</b> for all the app dependencies
+- <b>.env:</b> for all the Africa's Talking credentials and any other credentials/resources
+- <b>app.rb:</b> the app in Ruby 'minimalist' Sinatra framework {Let the perfomance begin ;-)}
+- <b>database.rb:</b> the database connector
+- <b>docker-compose.yml:</b> for container orchestration
