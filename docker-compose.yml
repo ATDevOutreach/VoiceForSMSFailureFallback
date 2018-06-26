@@ -1,0 +1,17 @@
+services: 
+  database: 
+    environment: 
+      - "POSTGRES_USER:'postgres'"
+      - "POSTGRES_PASSWORD:'mysecretpassword'"
+      - "POSTGRES_DB:'postgres'"
+    image: "postgres:9.5"
+    ports: 
+      - "5432:5432"
+    restart: always
+  web: 
+    build: "."
+    ports: 
+      - "4567:4567"
+    depends_on:
+      - "database"
+version: "3"
