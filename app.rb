@@ -1,7 +1,7 @@
 
-require './AfricasTalkingGateway'
-require './database'
-require 'dotenv'
+require './util/AfricasTalkingGateway'
+require './conf/database'
+require './conf/dotenv'
 Dotenv.load
 require 'sinatra'
 require 'pg'
