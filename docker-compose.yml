@@ -1,17 +1,30 @@
-services: 
-  database: 
-    environment: 
+version: '3'
+services:
+  # The Web Server
+  web:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - database
+    ports:
+      - 4567:4567
+    environment:
+      - "DB_PORT=5432"
+      - "DB_HOST=database" 
+
+  # The Database
+  database:
+    image: postgres:9.5 
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
       - "POSTGRES_USER:'postgres'"
       - "POSTGRES_PASSWORD:'mysecretpassword'"
       - "POSTGRES_DB:'postgres'"
-    image: "postgres:9.5"
-    ports: 
-      - "5432:5432"
-    restart: always
-  web: 
-    build: "."
-    ports: 
-      - "4567:4567"
-    depends_on:
-      - "database"
-version: "3"
+    ports:
+        - "5432:5432"
+
+volumes:
+  postgres_data:
+

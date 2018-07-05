@@ -3,7 +3,7 @@ require 'pg'
 
 #DATABASE
 #Connect to DB default postgres, pwd: my password
-DB = Sequel.connect('postgres://postgres:mysecretpassword@localhost/postgres')
+DB = Sequel.connect('postgres://postgres:mysecretpassword@database/postgres')
 
 #Contact Table
 DB.create_table :contacts do
