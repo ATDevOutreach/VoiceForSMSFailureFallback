@@ -9,3 +9,5 @@ gem 'thin'
 gem 'dotenv'
 
 gem 'sequel'
+
+gem 'sinatra-reloader'

@@ -11,6 +11,7 @@ DB.drop_table?(:balances)
 DB.drop_table?(:ussdsessions)
 DB.drop_table?(:dlrs)
 DB.drop_table?(:receivedsms)
+DB.drop_table?(:voicecalls)
 
 #Contact Table
 DB.create_table :contacts do

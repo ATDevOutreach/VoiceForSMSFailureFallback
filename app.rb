@@ -1,10 +1,13 @@
-
-require './util/AfricasTalkingGateway'
-require './conf/database'
-require './conf/dotenv'
-Dotenv.load
 require 'sinatra'
+require "sinatra/reloader"
+require_relative 'AfricasTalkingGateway'
+require_relative 'database'
+require 'dotenv'
+Dotenv.load
 require 'pg'
+
+#Set port and bind
+set :bind, '0.0.0.0'
 
 #Instantiate the gateway
 gateway = AfricasTalkingGateway.new(ENV['AT_API_USERNAME'],ENV['AT_API_KEY_LIVE'])
