@@ -1,8 +1,8 @@
 require 'sinatra'
 require "sinatra/reloader"
-require_relative 'AfricasTalkingGateway'
-require_relative 'database'
-require 'dotenv'
+require_relative './conf/AfricasTalkingGateway'
+require_relative './util/database'
+require_relative './conf/dotenv'
 Dotenv.load
 require 'pg'
 
