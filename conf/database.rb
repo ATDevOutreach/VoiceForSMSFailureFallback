@@ -5,6 +5,13 @@ require 'pg'
 #Connect to DB default postgres, pwd: my password
 DB = Sequel.connect('postgres://postgres:mysecretpassword@database/postgres')
 
+#Delete All Tables If Exists
+DB.drop_table?(:contacts)
+DB.drop_table?(:balances)
+DB.drop_table?(:ussdsessions)
+DB.drop_table?(:dlrs)
+DB.drop_table?(:receivedsms)
+
 #Contact Table
 DB.create_table :contacts do
     primary_key :id
@@ -64,7 +71,7 @@ DB.create_table :receivedsms do
 end
 receivedsms = DB[:receivedsms] #Create dataset
 #Populate the table
-ussdsessions.insert(:from => '20880', :to => '+2348177779360',:text => 'Im a lumberjack',:datestring => '27-11-2018',:messageid => 'ATdctys399ajks',:linkid => 'AtDshaksh392001')
+receivedsms.insert(:from => '20880', :to => '+2348177779360',:text => 'Im a lumberjack',:datestring => '27-11-2018',:messageid => 'ATdctys399ajks',:linkid => 'AtDshaksh392001')
 
 #Voice Table
 DB.create_table :voicecalls do
@@ -82,4 +89,4 @@ DB.create_table :voicecalls do
 end
 voicecalls = DB[:voicecalls] #Create dataset
 #Populate the table
-ussdsessions.insert(:isactive => '1', :sessionid => 'yahd761728339',:direction => 'incoming',:callernumber => '+254711082147',:destinationnumber => '+254787235065',:dtmfdigits => '1',:recordingurl => 'http://www.mp3.com/usxtlrs',:durationinseconds => '43sec',:currencycode => 'KES',:amount => '19.00')
+voicecalls.insert(:isactive => '1', :sessionid => 'yahd761728339',:direction => 'incoming',:callernumber => '+254711082147',:destinationnumber => '+254787235065',:dtmfdigits => '1',:recordingurl => 'http://www.mp3.com/usxtlrs',:durationinseconds => '43sec',:currencycode => 'KES',:amount => '19.00')
