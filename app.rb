@@ -21,15 +21,14 @@ post '/ussd' do
 
     puts "Received request from -#{@phoneNumber}"
 
-    if(@text == "")
+    if(@text == " ")
         #Check the Database by phone for balance
-        balance = "Store balance as string"
+        balance = "1500.00"
 
         #Return response
         response = "END Thank you for contacting Branch. Your balance is: \n"
         response += "Naira $balance"
     end
-
     body response
     status 200
 end
@@ -87,18 +86,24 @@ post '/communicate' do
     @durationInSeconds = params[:durationInSeconds]
     @currencyCode = params[:currencyCode]
     @amount = params[:amount]
-    
-    #Populate the table
-    voiceinsert = voicecalls.insert(:isactive => "#{@isActive}",:sessionid => "#{@sessionId}",:direction => "#{@direction}",:callernumber => "#{@callerNumber}",:destinationnumber => "#{@destinationNumber}",:dtmfdigits => "#{@dtmfDigits}",:recordingurl => "#{@recordingUrl}",:durationinseconds => "#{@durationInSeconds}",:currencycode => "#{@currencyCode}",:amount => "#{@amount}")
-    puts "inserted voice call #{voiceinsert}"
 
+    #Values for making calls
+    callFrom=ENV['AT_VOICE_NUMBER']
+    callTo=params[:to]
+    
+    if (@sessionId != nil)
+        #Populate the table
+        voiceinsert = voicecalls.insert(:isactive => "#{@isActive}",:sessionid => "#{@sessionId}",:direction => "#{@direction}",:callernumber => "#{@callerNumber}",:destinationnumber => "#{@destinationNumber}",:dtmfdigits => "#{@dtmfDigits}",:recordingurl => "#{@recordingUrl}",:durationinseconds => "#{@durationInSeconds}",:currencycode => "#{@currencyCode}",:amount => "#{@amount}")
+        puts "inserted voice call #{voiceinsert}"
+    end
+    
     #VOICE
     #If Voice call isActive == 1, Say
     if(@isActive == 1)
         response = "<?xml version='1.0' encoding='UTF-8'?><Response><Say>#{@message}</Say></Response>";
+        body response
+        status 201   
     end 
-    body response
-    status 201
 
     #SMS
     #Check DB for Phone Number Status
