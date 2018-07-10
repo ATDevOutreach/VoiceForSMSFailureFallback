@@ -43,6 +43,10 @@ $ git clone https://github.com/ATDevOutreach/VoiceForSMSFailureFallback.git Voic
 ````
 $ sudo docker-compose build && docker-compose up
 ````
+- To edit and rebuild:
+````
+$ sudo docker-compose down && docker-compose build
+````
 
 #### APP ENDPOINTS
 ##### /ussd
@@ -100,8 +104,8 @@ curl -v -X POST -H "Content-Type: application/json" -d '{
   "sessionId":"ATx138920183226162773",
   "serviceCode":"*384*303",
   "phoneNumber": "+254722000000",
-  "text":" "
-}' "http://4ded2607.ngrok.io/ussd"
+  "text":"1"
+}' "http://e978a1aa.ngrok.io/ussd"
 ````
 ##### /dlr
 ````
@@ -111,7 +115,7 @@ curl -v -X POST -H "Content-Type: application/json" -d '{
   "phoneNumber": "+254722000000",
   "networkCode": "63902",
   "failureReason":"UserIsInactive"
-}' "http://4ded2607.ngrok.io/dlr"
+}' "http://e978a1aa.ngrok.io/dlr"
 ````
 ##### /receiveSMS
 ````
@@ -122,14 +126,14 @@ curl -v -X POST -H "Content-Type: application/json" -d '{
   "date":"2018-07-10"
   "id":"ATidx138920183226162773",
   "linkId":"ATldx138920183226162773"
-}' "http://4ded2607.ngrok.io/receiveSMS"
+}' "http://e978a1aa.ngrok.io/receiveSMS"
 ````
 ##### /communicate
 ````
 curl -v -X POST -H "Content-Type: application/json" -d '{                                                                    
   "to":"+254722000000",
   "message": "I am a lumberjack, I work all day and sleep all night!"
-}' "http://4ded2607.ngrok.io/communicate"
+}' "http://e978a1aa.ngrok.io/communicate"
 ````
 ##### /communicate
 ````
@@ -144,5 +148,5 @@ curl -v -X POST -H "Content-Type: application/json" -d '{
   "durationInSeconds":"3.21",
   "currencyCode":"KES",
   "amount":"0.58"
-}' "http://4ded2607.ngrok.io/communicate"
+}' "http://e978a1aa.ngrok.io/communicate"
 ````

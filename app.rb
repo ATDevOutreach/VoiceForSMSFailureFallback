@@ -1,7 +1,7 @@
 require 'sinatra'
 require "sinatra/reloader"
 require_relative './conf/AfricasTalkingGateway'
-require_relative './util/database'
+require_relative './util/Database'
 require 'dotenv'
 Dotenv.load
 require 'pg'
@@ -12,6 +12,9 @@ set :bind, '0.0.0.0'
 #Instantiate the gateway
 gateway = AfricasTalkingGateway.new(ENV['AT_API_USERNAME'],ENV['AT_API_KEY_LIVE'])
 
+#Instantiate the database
+database = Database.new
+
 #Manage the USSD interactions
 post '/ussd' do
     @sessionId = params[:sessionId]
@@ -21,7 +24,7 @@ post '/ussd' do
 
     puts "Received request from -#{@phoneNumber}"
 
-    if(@text == " ")
+    if(@text == "1")
         #Check the Database by phone for balance
         balance = "1500.00"
 
@@ -39,14 +42,14 @@ post '/dlr' do
     @status = params[:status]
     @phoneNumber = params[:phoneNumber]
     @networkCode = params[:networkCode]
-    @failureReason = param[:failureReason]
+    @failureReason = params[:failureReason]
     #Print to console
     puts "Received dlr from AT -#{@id} -#{@status} -#{@phoneNumber} -#{@networkCode}  -#{@failureReason}"
 
     #Store dlr and update contacts table
-    dlrsdone = dlrs.insert(:dlrid => "#{@id}",:status=> "#{@status}",:phonenumber=> "#{@phoneNumber}",networkcode=> "#{@networkCode}",failurereason=> "#{@failureReason}")
+    dlrsdone = database.dlrs.insert(:dlrid => "#{@id}",:status=> "#{@status}",:phonenumber=> "#{@phoneNumber}",networkcode=> "#{@networkCode}",failurereason=> "#{@failureReason}")
     
-    contactsdone = contacts.where(:phonenumber => "#{@phoneNumber}").update(:status=> "#{@status}")
+    contactsdone = database.contacts.where(:phonenumber => "#{@phoneNumber}").update(:status=> "#{@status}")
 
     puts "Inserted dlr #{dlrsdone} and updated contacts #{contactsdone}"
 end
@@ -65,7 +68,7 @@ post '/receiveSMS' do
     puts "Received sms from AT -#{@from} -#{@to} -#{@text} -#{@date} -#{@id} -#{@linkId}"
 
     #Store Incoming SMS
-    rcvdsms = receivedsms.insert(:from => "#{@from}",:to =>"#{@to}",:text =>"#{@text}", :date =>"#{@date}", :id => "#{@id}", :linkid =>"#{@linkId}")
+    rcvdsms = database.receivedsms.insert(:from => "#{@from}",:to =>"#{@to}",:text =>"#{@text}", :date =>"#{@date}", :id => "#{@id}", :linkid =>"#{@linkId}")
     puts "Inserts received SMS #{rcvdsms}"
 end
 
@@ -93,7 +96,7 @@ post '/communicate' do
     
     if (@sessionId != nil)
         #Populate the table
-        voiceinsert = voicecalls.insert(:isactive => "#{@isActive}",:sessionid => "#{@sessionId}",:direction => "#{@direction}",:callernumber => "#{@callerNumber}",:destinationnumber => "#{@destinationNumber}",:dtmfdigits => "#{@dtmfDigits}",:recordingurl => "#{@recordingUrl}",:durationinseconds => "#{@durationInSeconds}",:currencycode => "#{@currencyCode}",:amount => "#{@amount}")
+        voiceinsert = database.voicecalls.insert(:isactive => "#{@isActive}",:sessionid => "#{@sessionId}",:direction => "#{@direction}",:callernumber => "#{@callerNumber}",:destinationnumber => "#{@destinationNumber}",:dtmfdigits => "#{@dtmfDigits}",:recordingurl => "#{@recordingUrl}",:durationinseconds => "#{@durationInSeconds}",:currencycode => "#{@currencyCode}",:amount => "#{@amount}")
         puts "inserted voice call #{voiceinsert}"
     end
     
@@ -107,7 +110,7 @@ post '/communicate' do
 
     #SMS
     #Check DB for Phone Number Status
-    phonestatus = contacts.where(phonenumber: "#{@to}", status: 'Success')
+    phonestatus = database.contacts.where(phonenumber: "#{@to}", status: 'Success')
     if(phonestatus[:status] == 'Success' || phonestatus == nil)
         #Send Message as Usual
         reports = gateway.sendMessage(to, message)
@@ -116,7 +119,7 @@ post '/communicate' do
             puts 'number=' + x.number + ';status=' + x.status + ';statusCode=' + x.statusCode + ';messageId=' + x.messageId + ';cost=' + x.cost 
 
             #Store for Analytics
-            storedcontact = contacts.where(phonenumber: x.number).update(status: x.status)
+            storedcontact = database.contacts.where(phonenumber: x.number).update(status: x.status)
             puts "updated contact #{storedcontact}"
         }
     else
