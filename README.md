@@ -105,7 +105,7 @@ curl -v -X POST -H "Content-Type: application/json" -d '{
   "serviceCode":"*384*303",
   "phoneNumber": "+254722000000",
   "text":"1"
-}' "http://e978a1aa.ngrok.io/ussd"
+}' "http://57ab2c6b.ngrok.io/ussd"
 ````
 ##### /dlr
 ````
@@ -115,7 +115,7 @@ curl -v -X POST -H "Content-Type: application/json" -d '{
   "phoneNumber": "+254722000000",
   "networkCode": "63902",
   "failureReason":"UserIsInactive"
-}' "http://e978a1aa.ngrok.io/dlr"
+}' "http://57ab2c6b.ngrok.io/dlr"
 ````
 ##### /receiveSMS
 ````
@@ -126,14 +126,14 @@ curl -v -X POST -H "Content-Type: application/json" -d '{
   "date":"2018-07-10"
   "id":"ATidx138920183226162773",
   "linkId":"ATldx138920183226162773"
-}' "http://e978a1aa.ngrok.io/receiveSMS"
+}' "http://57ab2c6b.ngrok.io/receiveSMS"
 ````
 ##### /communicate
 ````
 curl -v -X POST -H "Content-Type: application/json" -d '{                                                                    
   "to":"+254722000000",
   "message": "I am a lumberjack, I work all day and sleep all night!"
-}' "http://e978a1aa.ngrok.io/communicate"
+}' "http://57ab2c6b.ngrok.io/communicate"
 ````
 ##### /communicate
 ````
@@ -148,5 +148,5 @@ curl -v -X POST -H "Content-Type: application/json" -d '{
   "durationInSeconds":"3.21",
   "currencyCode":"KES",
   "amount":"0.58"
-}' "http://e978a1aa.ngrok.io/communicate"
+}' "http://57ab2c6b.ngrok.io/communicate"
 ````

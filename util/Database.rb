@@ -12,16 +12,48 @@ class Database
         #Connect to @DB default postgres, pwd: my password
         @DB = Sequel.connect('postgres://postgres:mysecretpassword@database/postgres')
 
-        #Delete All Tables If Exists
+    end 
+
+    #Delete All Tables If Exists
+    def drop()
         @DB.drop_table?(:contacts)
         @DB.drop_table?(:balances)
         @DB.drop_table?(:ussdsessions)
         @DB.drop_table?(:dlrs)
         @DB.drop_table?(:receivedsms)
         @DB.drop_table?(:voicecalls)
+    end
 
-    end 
+    #Seed data
+    def seed()
+        contacts = @DB[:contacts] #Create dataset
+        #Populate the contacts
+        contacts.insert(:phonenumber => '+2348177779360', :status => 'Success')
+        contacts.insert(:phonenumber => '+254787235065', :status => 'Success')
 
+        balances = @DB[:balances] #Create dataset
+        #Populate the table
+        balances.insert(:phonenumber => '+2348177779360', :balance => rand * 100)
+        balances.insert(:phonenumber => '+254787235065', :balance => rand * 100)
+
+        ussdsessions = @DB[:ussdsessions] #Create dataset
+        #Populate the table
+        ussdsessions.insert(:sessionid => 'yahd761728339', :servicecode => '*384*147',:phonenumber => '+254787235065',:text => '1')
+
+        dlrs = @DB[:dlrs] #Create dataset
+        #Populate the table
+        dlrs.insert(:status => 'Success', :dlrid => 'AT1shfdtxakaka',:phonenumber => '+254787235065',:networkcode => '60555',:failurereason => 'Rejected')
+
+        receivedsms = @DB[:receivedsms] #Create dataset
+        #Populate the table
+        receivedsms.insert(:from => '20880', :to => '+2348177779360',:text => 'Im a lumberjack',:datestring => '27-11-2018',:messageid => 'ATdctys399ajks',:linkid => 'AtDshaksh392001')
+
+        voicecalls = @DB[:voicecalls] #Create dataset
+        #Populate the table
+        voicecalls.insert(:isactive => '1', :sessionid => 'yahd761728339',:direction => 'incoming',:callernumber => '+254711082147',:destinationnumber => '+254787235065',:dtmfdigits => '1',:recordingurl => 'http://www.mp3.com/usxtlrs',:durationinseconds => '43sec',:currencycode => 'KES',:amount => '19.00')        
+    end
+
+    #Create All Tables
     #Contact Table
     def contacts()
         @DB.create_table :contacts do
@@ -29,10 +61,6 @@ class Database
             String :phonenumber
             String :status
         end
-        contacts = @DB[:contacts] #Create dataset
-        #Populate the contacts
-        contacts.insert(:phonenumber => '+2348177779360', :status => 'Success')
-        contacts.insert(:phonenumber => '+254787235065', :status => 'Success')
     end
 
 
@@ -43,10 +71,6 @@ class Database
             String :phonenumber
             Float :balance 
         end
-        balances = @DB[:balances] #Create dataset
-        #Populate the table
-        balances.insert(:phonenumber => '+2348177779360', :balance => rand * 100)
-        balances.insert(:phonenumber => '+254787235065', :balance => rand * 100)
     end 
 
 
@@ -59,9 +83,6 @@ class Database
             String :phonenumber
             String :text
         end 
-        ussdsessions = @DB[:ussdsessions] #Create dataset
-        #Populate the table
-        ussdsessions.insert(:sessionid => 'yahd761728339', :servicecode => '*384*147',:phonenumber => '+254787235065',:text => '1')
     end
 
     #DLRs Table
@@ -74,9 +95,6 @@ class Database
             String :networkcode
             String :failurereason
         end
-        dlrs = @DB[:dlrs] #Create dataset
-        #Populate the table
-        dlrs.insert(:status => 'Success', :dlrid => 'AT1shfdtxakaka',:phonenumber => '+254787235065',:networkcode => '60555',:failurereason => 'Rejected')
     end
 
     #ReceivedSMS Table
@@ -90,9 +108,6 @@ class Database
             String :messageid
             String :linkid
         end
-        receivedsms = @DB[:receivedsms] #Create dataset
-        #Populate the table
-        receivedsms.insert(:from => '20880', :to => '+2348177779360',:text => 'Im a lumberjack',:datestring => '27-11-2018',:messageid => 'ATdctys399ajks',:linkid => 'AtDshaksh392001')
     end
 
     #Voice Table
@@ -110,9 +125,31 @@ class Database
             String :currencycode
             String :amount
         end
-        voicecalls = @DB[:voicecalls] #Create dataset
-        #Populate the table
-        voicecalls.insert(:isactive => '1', :sessionid => 'yahd761728339',:direction => 'incoming',:callernumber => '+254711082147',:destinationnumber => '+254787235065',:dtmfdigits => '1',:recordingurl => 'http://www.mp3.com/usxtlrs',:durationinseconds => '43sec',:currencycode => 'KES',:amount => '19.00')
+    end
+
+    #Return Table Instance
+    def storeContact()
+        return @DB[:contacts]
+    end
+
+    def storeBalance()
+        return @DB[:balances]
+    end
+
+    def storeUssd()
+        return @DB[:ussdsessions]
+    end
+
+    def storeVoice()
+        return @DB[:voicecalls]
+    end
+
+    def storeSMS()
+        return @DB[:receivedsms]
+    end    
+
+    def storeDlr()
+        return @DB[:dlrs]
     end
     
 end

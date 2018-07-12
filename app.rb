@@ -8,12 +8,23 @@ require 'pg'
 
 #Set port and bind
 set :bind, '0.0.0.0'
+set :logging, true
+set :sessions, true
 
 #Instantiate the gateway
 gateway = AfricasTalkingGateway.new(ENV['AT_API_USERNAME'],ENV['AT_API_KEY_LIVE'])
-
-#Instantiate the database
-database = Database.new
+#Create Database client
+database = Database.new 
+database.drop
+#Create Tables
+database.contacts
+database.balances
+database.ussdsessions
+database.dlrs
+database.receivedsms
+database.voicecalls
+#Seed Tables
+database.seed
 
 #Manage the USSD interactions
 post '/ussd' do
@@ -22,7 +33,11 @@ post '/ussd' do
     @phoneNumber = params[:phoneNumber]
     @text = params[:text]
 
-    puts "Received request from -#{@phoneNumber}"
+    puts "Received USSD Session from AT -#{@sessionId} -#{@serviceCode} -#{@phoneNumber} -#{@text}"
+
+    #Store USSD Session Details
+    ussddone = database.storeUssd.insert(:sessionid => "#{@sessionId}",:servicecode=> "#{@serviceCode}",:phonenumber=> "#{@phoneNumber}",:text=> "#{@text}")
+    puts "Database USSD Response #{@ussddone}"
 
     if(@text == "1")
         #Check the Database by phone for balance
@@ -47,9 +62,9 @@ post '/dlr' do
     puts "Received dlr from AT -#{@id} -#{@status} -#{@phoneNumber} -#{@networkCode}  -#{@failureReason}"
 
     #Store dlr and update contacts table
-    dlrsdone = database.dlrs.insert(:dlrid => "#{@id}",:status=> "#{@status}",:phonenumber=> "#{@phoneNumber}",networkcode=> "#{@networkCode}",failurereason=> "#{@failureReason}")
+    dlrsdone = database.storeDlr.insert(:dlrid => "#{@id}",:status=> "#{@status}",:phonenumber=> "#{@phoneNumber}",:networkcode=> "#{@networkCode}",:failurereason=> "#{@failureReason}")
     
-    contactsdone = database.contacts.where(:phonenumber => "#{@phoneNumber}").update(:status=> "#{@status}")
+    contactsdone = database.storeContact.where(:phonenumber => "#{@phoneNumber}").update(:status=> "#{@status}")
 
     puts "Inserted dlr #{dlrsdone} and updated contacts #{contactsdone}"
 end
@@ -68,7 +83,7 @@ post '/receiveSMS' do
     puts "Received sms from AT -#{@from} -#{@to} -#{@text} -#{@date} -#{@id} -#{@linkId}"
 
     #Store Incoming SMS
-    rcvdsms = database.receivedsms.insert(:from => "#{@from}",:to =>"#{@to}",:text =>"#{@text}", :date =>"#{@date}", :id => "#{@id}", :linkid =>"#{@linkId}")
+    rcvdsms = database.storeSMS.insert(:from => "#{@from}",:to =>"#{@to}",:text =>"#{@text}", :date =>"#{@date}", :id => "#{@id}", :linkid =>"#{@linkId}")
     puts "Inserts received SMS #{rcvdsms}"
 end
 
@@ -96,7 +111,7 @@ post '/communicate' do
     
     if (@sessionId != nil)
         #Populate the table
-        voiceinsert = database.voicecalls.insert(:isactive => "#{@isActive}",:sessionid => "#{@sessionId}",:direction => "#{@direction}",:callernumber => "#{@callerNumber}",:destinationnumber => "#{@destinationNumber}",:dtmfdigits => "#{@dtmfDigits}",:recordingurl => "#{@recordingUrl}",:durationinseconds => "#{@durationInSeconds}",:currencycode => "#{@currencyCode}",:amount => "#{@amount}")
+        voiceinsert = database.storeVoice.insert(:isactive => "#{@isActive}",:sessionid => "#{@sessionId}",:direction => "#{@direction}",:callernumber => "#{@callerNumber}",:destinationnumber => "#{@destinationNumber}",:dtmfdigits => "#{@dtmfDigits}",:recordingurl => "#{@recordingUrl}",:durationinseconds => "#{@durationInSeconds}",:currencycode => "#{@currencyCode}",:amount => "#{@amount}")
         puts "inserted voice call #{voiceinsert}"
     end
     
@@ -110,7 +125,7 @@ post '/communicate' do
 
     #SMS
     #Check DB for Phone Number Status
-    phonestatus = database.contacts.where(phonenumber: "#{@to}", status: 'Success')
+    phonestatus = database.storeContact.where(phonenumber: "#{@to}", status: 'Success')
     if(phonestatus[:status] == 'Success' || phonestatus == nil)
         #Send Message as Usual
         reports = gateway.sendMessage(to, message)
@@ -119,7 +134,7 @@ post '/communicate' do
             puts 'number=' + x.number + ';status=' + x.status + ';statusCode=' + x.statusCode + ';messageId=' + x.messageId + ';cost=' + x.cost 
 
             #Store for Analytics
-            storedcontact = database.contacts.where(phonenumber: x.number).update(status: x.status)
+            storedcontact = database.storeContact.where(phonenumber: x.number).update(status: x.status)
             puts "updated contact #{storedcontact}"
         }
     else
